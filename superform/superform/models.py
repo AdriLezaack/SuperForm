@@ -59,6 +59,7 @@ class Publishing(db.Model):
     image_url = db.Column(db.Text)
     date_from = db.Column(db.DateTime)
     date_until = db.Column(db.DateTime)
+    extra = db.Column(db.Text)
 
     __table_args__ = (db.PrimaryKeyConstraint('post_id', 'channel_id'),)
 
@@ -75,7 +76,7 @@ class Channel(db.Model):
     module = db.Column(db.String(100), nullable=False)
     config = db.Column(db.Text, nullable=False)
 
-    publishings = db.relationship("Publishing", cascade="all, delete-orphan", backref="channel", lazy=True)
+    publishings = db.relationship("Publishing", backref="channel", lazy=True)
     authorizations = db.relationship("Authorization", cascade="all, delete", backref="channel", lazy=True)
 
     __table_args__ = ({"sqlite_autoincrement": True},)
@@ -102,7 +103,5 @@ class Permission(Enum):
 
 
 class State(Enum):
-    INCOMPLETE = -1
-    NOTVALIDATED = 0
-    VALIDATED = 1
+    WAITING = 1
     PUBLISHED = 2

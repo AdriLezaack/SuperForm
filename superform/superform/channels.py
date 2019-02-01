@@ -29,6 +29,7 @@ def channel_list():
                 channel = Channel(name=name, module=get_module_full_name(module), config="{}")
                 db.session.add(channel)
                 db.session.commit()
+
         elif action == "delete":
             channel_id = request.form.get("id")
             channel = Channel.query.get(channel_id)

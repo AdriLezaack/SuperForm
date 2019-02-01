@@ -4,6 +4,7 @@
     <h1>Index</h1>
 
     {% if session.logged_in %}
+
         <div class="row">
         <div class="col-md-12">
             {% if user.is_mod %}
@@ -91,7 +92,7 @@
                     <td>
                         <a href="#" class="btn btn-outline-primary" role="button">Edit</a>
                         <a href="#" class="btn btn-outline-primary">Copy</a>
-                        <a href="#" class="btn btn-outline-warning" role="button">Delete</a>
+                        <a href="{{ url_for('delete.delete', id=item.id) }}" class="btn btn-outline-warning" role="button">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}

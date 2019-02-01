@@ -9,7 +9,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" crossorigin="anonymous">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/select2.min.css') }}" integrity="sha384-Tkthu0AGB6QfU+FBA1n/6ExgfaQ2UMBXlaFaY8fVj70AgQEuRUP3oIKmmwZnAhIW" crossorigin="anonymous">
         <title>{% block title %}{% endblock %} - Superform</title>
         {% endblock %}
     </head>
@@ -61,10 +61,13 @@
             {% block content %}{% endblock %}
         </div>
         <!-- Optional JavaScript -->
+
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/popper.min.js') }}" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/select2.min.js') }}" crossorigin="anonymous"></script>
+
 
         {% block scripts %}{% endblock %}
     </body>

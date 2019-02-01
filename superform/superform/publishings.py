@@ -1,8 +1,10 @@
-from flask import Blueprint, url_for, request, redirect, render_template
+from datetime import datetime, timedelta
+import json
+from flask import Blueprint, url_for, request, redirect, render_template, flash, session
 
-from superform import channels
-from superform.models import db, Publishing, Channel
 from superform.utils import login_required, datetime_converter, str_converter
+from superform.models import db, Publishing, Channel
+from superform.run_plugin_exception import RunPluginException
 
 pub_page = Blueprint('publishings', __name__)
 
@@ -18,9 +20,19 @@ def create_a_publishing(post, chn, form):
         form.get(chan + '_datefrompost')) is not None else post.date_from
     date_until = datetime_converter(form.get(chan + '_dateuntilpost')) if datetime_converter(
         form.get(chan + '_dateuntilpost')) is not None else post.date_until
+
+    extra = dict()
+    plugin_name = chn.module
+    from importlib import import_module
+    plugin = import_module(plugin_name)
+
+    if 'get_channel_fields' in dir(plugin):
+        extra = plugin.get_channel_fields(form, chan)
+
     pub = Publishing(post_id=post.id, channel_id=chn.id, state=0, title=title_post, description=descr_post,
                      link_url=link_post, image_url=image_post,
-                     date_from=date_from, date_until=date_until)
+                     date_from=date_from, date_until=date_until,
+                     extra=json.dumps(extra))
 
     db.session.add(pub)
     db.session.commit()
