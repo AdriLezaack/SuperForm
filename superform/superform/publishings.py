@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 from flask import Blueprint, url_for, request, redirect, render_template, flash, session
 
+import channels
 from superform.utils import login_required, datetime_converter, str_converter
 from superform.models import db, Publishing, Channel
 from superform.run_plugin_exception import RunPluginException
