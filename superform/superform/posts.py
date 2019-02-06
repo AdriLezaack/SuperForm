@@ -26,9 +26,69 @@ def create_a_post(form):
     return p
 
 
+def create_a_publishing(post, chn, form):
+    chan = str(chn.name)
+    title_post = form.get(chan + '_titlepost') if (form.get(chan + '_titlepost') is not None) else post.title
+    user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
+
+    if form.get(chan + '_descriptionpost') is not None :
+        descr_post = form.get(chan + '_descriptionpost')
+    else :
+        descr_post = post.description
+
+    link_post = form.get(chan + '_linkurlpost') if form.get(chan + '_linkurlpost') is not None else post.link_url
+    image_post = form.get(chan + '_imagepost') if form.get(chan + '_imagepost') is not None else post.image_url
+    date_from = datetime_converter(form.get(chan + '_datefrompost')) if datetime_converter(
+        form.get(chan + '_datefrompost')) is not None else post.date_from
+    date_until = datetime_converter(
+        form.get(chan + '_dateuntilpost')) if datetime_converter(
+        form.get(chan + '_dateuntilpost')) is not None else post.date_until
+    pub = Publishing(post_id=post.id, channel_id=chn.id, state=0,
+                     title=title_post, description=descr_post,
+                     link_url=link_post, image_url=image_post,
+                     date_from=date_from, date_until=date_until)
+
+    c = db.session.query(Channel).filter(
+        Channel.id == pub.channel_id).first()
+    if c is not None:
+        plugin_name = c.module
+        ##If it is a pdf chanel we don't need to save it, printing it would be enough
+        # TEAM6: MODIFICATION FOR PDF
+        if str(plugin_name).endswith("pdf"):
+            c_conf = c.config
+            from importlib import import_module
+            plugin = import_module(plugin_name)
+            plugin.run(pub, c_conf)
+            # Does not save the pdf posts
+            return pub
+        # END OF MODIFICATION
+
+    if is_gcal_channel(chan) and not gcal_plugin.is_valid(pub):
+       return None
+    if is_gcal_channel(chan):
+        generate_google_user_credentials(chan)
+
+    db.session.add(pub)
+    db.session.commit()
+    return pub
+
+
+def is_gcal_channel(channel_id):
+    """TEAM2"""
+    c = db.session.query(Channel).filter(Channel.name == channel_id).first()
+    return c.module.endswith('gcal_plugin')
+
+
+def generate_google_user_credentials(channel_id):
+    """TEAM2"""
+    c = db.session.query(Channel).filter(Channel.name == channel_id).first()
+    gcal_plugin.generate_user_credentials(c.config)
+
+
 @posts_page.route('/new', methods=['GET', 'POST'])
 @login_required()
 def new_post():
+
     user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
     list_of_channels = channels_available_for_user(user_id)
     for elem in list_of_channels:
@@ -38,7 +98,7 @@ def new_post():
         setattr(elem, "unavailablefields", unaivalable_fields)
 
     if request.method == "GET":
-        return render_template('new.html', l_chan=list_of_channels)
+        return render_template('new.html', l_chan=list_of_channels, response="")
     else:
         create_a_post(request.form)
         return redirect(url_for('index'))
@@ -56,11 +116,15 @@ def publish_from_new_post():
                 def substr(elem):
                     import re
                     return re.sub('^chan\_option\_', '', elem)
-
                 c = Channel.query.get(substr(elem))
                 # for each selected channel options
                 # create the publication
                 pub = create_a_publishing(p, c, request.form)
+                if pub == None :
+                    p.title = "[DRAFT] "+p.title
+                    flash("The form was not filled correctly. Your post has been saved as draft, please proceed to modifications.")
+                else:
+                    print(c)
 
     db.session.commit()
     return redirect(url_for('index'))

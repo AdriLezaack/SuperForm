@@ -40,6 +40,11 @@
                             <a class="nav-link" href="{{ url_for('posts.new_post')}}">New post</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('stats.stats')}}">Stats</a>
+                        </li>
+
+
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('posts.records')}}">Archives</a>
                         </li>
                         <li class="nav-item {{ 'active' if request.endpoint == 'authorizations.authorizations' else '' }}">
@@ -64,15 +69,35 @@
                 </ul>
             </div>
         </nav>
+
         <div class="container-fluid">
-            {% block content %}{% endblock %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
         </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static', filename='js/popper.min.js') }}" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" crossorigin="anonymous"></script>
 
-        {% block scripts %}{% endblock %}
+        <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"
+              {#    integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" #}
+                crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/popper.min.js') }}"
+            {#      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" #}
+                crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"
+            {#      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" #}
+                crossorigin="anonymous"></script>
+        {% block scripts %} {% endblock %}
     </body>
 </html>

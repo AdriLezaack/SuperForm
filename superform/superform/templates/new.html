@@ -42,13 +42,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="datefrompost">Publication Date</label><br>
-                                            <input id="datefrompost" name="datefrompost" type="date" class="form-control">
+                                            <input id="datefrompost" name="datefrompost" type="datetime-local" valueAsDate='document.write(new Date())' class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="dateuntilpost">Publication Until</label><br>
-                                            <input id="dateuntilpost" name="dateuntilpost" type="date" class="form-control">
+                                            <input id="dateuntilpost" name="dateuntilpost" type="datetime-local" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +65,7 @@
                                  {% for chan in l_chan %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox" value="{{ chan.id }}">{{ chan.name }}
+                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox {{ chan.module }}" value="{{ chan.id }}">{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
@@ -74,7 +74,7 @@
 
                          <div class="card">
                           <div class="card-header">Status</div>
-                          <div class="card-body">Content</div>
+                          <div class="card-body" id="status-content"></div>
                          </div>
 
 
@@ -110,15 +110,29 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="{{ chan.name }}_datefrompost">Publication Date</label><br>
-                                            <input id="{{ chan.name }}_datefrompost" name="{{ chan.name }}_datefrompost" type="date" class="form-control">
+                                            <input id="{{ chan.name }}_datefrompost" name="{{ chan.name }}_datefrompost" type="datetime-local" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="{{ chan.name }}_dateuntilpost">Publication Until</label><br>
-                                            <input id="{{ chan.name }}_dateuntilpost" name="{{ chan.name }}_dateuntilpost" type="date" class="form-control">
+                                            <input id="{{ chan.name }}_dateuntilpost" name="{{ chan.name }}_dateuntilpost" type="datetime-local" class="form-control">
                                         </div>
                                     </div>
+                                    <!-- {% if chan.module == "superform.plugins.gcal_plugin" %}
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ chan.name }}_starttime">Start Time</label><br>
+                                            <input id="{{ chan.name }}_starttime" name="{{ chan.name }}_starttime" type="time" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ chan.name }}_endtime">End Time</label><br>
+                                            <input id="{{ chan.name }}_endtime" name="{{ chan.name }}_endtime" type="time" class="form-control">
+                                        </div>
+                                    </div>
+                                    {% endif %} -->
                                 </div>
 
                             </div>
@@ -177,7 +191,7 @@
         }
         $('input.checkbox').change(function () {
             var nbselected = $('input.checkbox:checked').length;
-            if(nbselected ==0){
+            if(nbselected === 0){
                $("#publish-button").prop('disabled', true);
             }else{
                $("#publish-button").prop('disabled', false);
@@ -213,5 +227,8 @@
             }
         });
     </script>
+
+    <script src="./static/js/date-init.js"></script>
+    <script src="./static/js/status-checker.js"></script>
 
 {% endblock %}
