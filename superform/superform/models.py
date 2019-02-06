@@ -54,7 +54,9 @@ class Post(db.Model):
 
 
 class Publishing(db.Model):
+
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    user_id = db.Column(db.String(80), db.ForeignKey("user.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
     state = db.Column(db.Integer, nullable=False, default=-1)
     title = db.Column(db.Text, nullable=False)
