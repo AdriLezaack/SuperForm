@@ -1,15 +1,17 @@
 from flask import Flask, render_template, session
 import pkgutil
 import importlib
+from flask import request
 
 import superform.plugins
 from superform.publishings import pub_page
-from superform.models import db, User, Post,Publishing
+from superform.models import db, User, Post, Publishing, Channel, State, Comment
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
 from superform.channels import channels_page
 from superform.posts import posts_page
-from superform.users import get_moderate_channels_for_user, is_moderator
+from superform.edit import edit_page
+from superform.rss import rss_page
 
 app = Flask(__name__)
 app.config.from_json("config.json")
@@ -20,6 +22,8 @@ app.register_blueprint(authorizations_page)
 app.register_blueprint(channels_page)
 app.register_blueprint(posts_page)
 app.register_blueprint(pub_page)
+app.register_blueprint(edit_page)
+app.register_blueprint(rss_page)
 
 # Init dbs
 db.init_app(app)
@@ -28,23 +32,53 @@ db.init_app(app)
 app.config["PLUGINS"] = {
     name: importlib.import_module(name)
     for finder, name, ispkg
-    in pkgutil.iter_modules(superform.plugins.__path__, superform.plugins.__name__ + ".")
+    in pkgutil.iter_modules(plugins.__path__, plugins.__name__ + ".")
 }
+SIZE_COMMENT = 40
 
 
-@app.route('/')
+@app.route('/', methods=["GET"])
 def index():
-    user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
-    posts=[]
-    flattened_list_pubs =[]
-    if user is not None:
-        setattr(user,'is_mod',is_moderator(user))
-        posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", ""))
-        chans = get_moderate_channels_for_user(user)
-        pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.id) & (Publishing.state == 0)) for c in chans)
-        flattened_list_pubs = [y for x in pubs_per_chan for y in x]
+    page = request.args.get("page")
+    if page is None or not page.isnumeric():
+        page = 1
+    else:
+        page = int(page)
+    user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
+    posts_var = []
+    pubs_unvalidated = []
+    if user_id != -1:
+        # AJOUTER Post.user_id == user_id dans posts DANS QUERY?
+        posts_var = db.session.query(Post).filter(Post.user_id == user_id).order_by(Post.date_created.desc()).paginate(page, 5, error_out=False)
+        for post in posts_var.items:
+            publishings_var = db.session.query(Publishing).filter(Publishing.post_id == post.id).all()
+            channels_var = set()
+            for publishing in publishings_var:
+                channels_var.add(db.session.query(Channel).filter(Channel.id == publishing.channel_id).first())
+            setattr(post, "channels", channels_var)
 
-    return render_template("index.html", user=user,posts=posts,publishings = flattened_list_pubs)
+        posts_user = db.session.query(Post).filter(Post.user_id == user_id).all()
+        pubs_unvalidated = db.session.query(Publishing).filter(Publishing.state == State.REFUSED.value).\
+            order_by(Publishing.post_id).order_by(Publishing.channel_id).all()
+        post_ids = [p.id for p in posts_user]
+        pubs = []
+
+        for pub_unvalidated in pubs_unvalidated:
+            if pub_unvalidated.post_id in post_ids:
+                channels_var = [db.session.query(Channel).filter(Channel.id == publishing.channel_id).first()]
+                setattr(pub_unvalidated, "channels", channels_var)
+                pubs.append(pubs_unvalidated)
+                last_comment = db.session.query(Comment).filter(Comment.publishing_id ==
+                                                                pub_unvalidated.publishing_id).first()
+                comm = comm_short = last_comment.moderator_comment[:SIZE_COMMENT]
+                if len(last_comment.moderator_comment) > SIZE_COMMENT:
+                    comm_short = comm + "..."
+
+                comm = last_comment.moderator_comment
+                setattr(pub_unvalidated, "comment_short", comm_short)
+                setattr(pub_unvalidated, "comment", comm)
+    return render_template("index.html", posts=posts_var, pubs_unvalidated=pubs_unvalidated)
+
 
 @app.errorhandler(403)
 def forbidden(error):

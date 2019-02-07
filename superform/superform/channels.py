@@ -1,7 +1,6 @@
 import json
 
-from flask import Blueprint, current_app, url_for, request, make_response, redirect, session, render_template
-
+from flask import Blueprint, current_app, url_for, request, redirect, render_template
 from superform.utils import login_required, get_instance_from_module_path, get_modules_names, get_module_full_name
 from superform.models import db, Channel
 import ast
@@ -28,6 +27,7 @@ def channel_list():
             if module in get_modules_names(current_app.config["PLUGINS"].keys()):
                 channel = Channel(name=name, module=get_module_full_name(module), config="{}")
                 db.session.add(channel)
+                # db.session.flush()
                 db.session.commit()
         elif action == "delete":
             channel_id = request.form.get("id")
@@ -39,12 +39,25 @@ def channel_list():
             channel_id = request.form.get("id")
             channel = Channel.query.get(channel_id)
             name = request.form.get('name')
-            channel.name = name
-            db.session.commit()
+            if name is not '':
+                channel.name = name
+                conf = json.loads(channel.config)
+                conf["channel_name"] = name
+                channel.config = json.dumps(conf)
+                db.session.commit()
 
     channels = Channel.query.all()
-    return render_template("channels.html", channels=channels,
-                           modules=get_modules_names(current_app.config["PLUGINS"].keys()))
+    mods = get_modules_names(current_app.config["PLUGINS"].keys())
+
+    auth_fields = dict()
+
+    for m in mods:
+        full_name = get_module_full_name(m)
+        clas = get_instance_from_module_path(full_name)
+        fields = clas.AUTH_FIELDS
+        auth_fields[m] = fields
+
+    return render_template("channels.html", channels=channels, modules=get_modules_names(current_app.config["PLUGINS"].keys()), auth_fields=auth_fields)
 
 
 @channels_page.route("/configure/<int:id>", methods=['GET', 'POST'])
@@ -56,18 +69,15 @@ def configure_channel(id):
     config_fields = clas.CONFIG_FIELDS
 
     if request.method == 'GET':
-        if (c.config is not ""):
+        if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
         return render_template("channel_configure.html", channel=c, config_fields=config_fields)
-    str_conf = "{"
-    cfield = 0
+
+    cfg = {}
     for field in config_fields:
-        if cfield > 0:
-            str_conf += ","
-        str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
-        cfield += 1
-    str_conf += "}"
-    c.config = str_conf
+        cfg[field] = request.form.get(field)
+    c.config = json.dumps(cfg)
+
     db.session.commit()
     return redirect(url_for('channels.channel_list'))
