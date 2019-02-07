@@ -1,6 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from enum import Enum
 import datetime
+import json
+
+from sqlalchemy import UniqueConstraint
+from sqlalchemy.ext.declarative import DeclarativeMeta
+
+from superform.utils import str_converter
 
 db = SQLAlchemy()
 
@@ -96,6 +102,19 @@ class Authorization(db.Model):
         return '<Authorization {} {}>'.format(repr(self.user_id), repr(self.channel_id))
 
 
+class Comment(db.Model):
+    publishing_id = db.Column(db.Integer, db.ForeignKey("publishing.publishing_id"), primary_key=True, nullable=False)
+    user_comment = db.Column(db.Text, nullable=True)
+    moderator_comment = db.Column(db.Text, nullable=True)
+    date_moderator_comment = db.Column(db.Text, nullable=True)
+    date_user_comment = db.Column(db.Text, nullable=True)
+
+    def __repr__(self):
+        return '<Comment {}>'.format(repr(self.publishing_id))
+
+    __table_args__ = (db.PrimaryKeyConstraint('publishing_id'),)
+
+
 class Permission(Enum):
     AUTHOR = 1
     MODERATOR = 2
@@ -103,6 +122,8 @@ class Permission(Enum):
 
 class State(Enum):
     INCOMPLETE = -1
-    NOTVALIDATED = 0
-    VALIDATED = 1
-    PUBLISHED = 2
+    NOT_VALIDATED = 0
+    VALIDATED_SHARED = 1
+    ARCHIVED = 2
+    REFUSED = 3
+    OLD_VERSION = 4

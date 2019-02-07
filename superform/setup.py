@@ -8,6 +8,15 @@ setup(
         'flask',
         'python3-saml',
         'sqlalchemy',
-        'flask-sqlalchemy'
+        'flask-sqlalchemy',
+        'tweepy',
+        'python3-linkedin',
+        'pykeepass',
+        'rfeed',
+        'slackclient',
+        'selenium',
+        'pytest',
+        'oauth2client',
+        'google-api-python-client'
     ],
 )
