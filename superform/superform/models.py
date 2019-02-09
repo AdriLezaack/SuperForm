@@ -4,6 +4,12 @@ import datetime
 
 db = SQLAlchemy()
 
+class State(Enum):
+    INCOMPLETE = -1
+    NOTVALIDATED = 0
+    VALIDATED = 1
+    PUBLISHED = 2
+
 
 class User(db.Model):
     id = db.Column(db.String(80), primary_key=True, unique=True, nullable=False)
@@ -99,10 +105,3 @@ class Authorization(db.Model):
 class Permission(Enum):
     AUTHOR = 1
     MODERATOR = 2
-
-
-class State(Enum):
-    INCOMPLETE = -1
-    NOTVALIDATED = 0
-    VALIDATED = 1
-    PUBLISHED = 2

@@ -49,6 +49,7 @@ def run(publishing, channel_config):
         # TODO should add log here
         return
 
+
 def check_validity(channel_config):
     """ Test validity of the channel. Return an error message if any. """
     json_data = json.loads(channel_config)

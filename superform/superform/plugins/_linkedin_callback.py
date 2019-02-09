@@ -1,4 +1,3 @@
-
 from flask import url_for, current_app, Blueprint, request, redirect
 from superform.utils import login_required
 from superform.models import db, Channel

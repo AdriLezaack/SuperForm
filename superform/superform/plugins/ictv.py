@@ -1,7 +1,6 @@
 import json
 from requests import get, post, exceptions
 import datetime
-from superform.utils import StatusCode
 from time import time
 
 FIELDS_UNAVAILABLE = ['ictv_data_form']
@@ -322,7 +321,7 @@ def run(pub, chan_conf):
     try:
         slide = generate_slide(chan_conf, pub)
     except (IctvServerConnection, IctvChannelConfiguration) as e:
-        return StatusCode.ERROR, e.popup(), None
+        return # StatusCode.ERROR, e.popup(), None
 
     capsule = generate_capsule(pub)
 
@@ -337,8 +336,8 @@ def run(pub, chan_conf):
         slide_url = capsules_url + '/' + str(capsule_id) + '/slides'
         slide_request = post(slide_url, json=slide, headers=request_args['headers'])
         if slide_request.status_code == 201:
-            return StatusCode.OK, None, None
+            return # StatusCode.OK, None, None
         else:
-            return StatusCode.ERROR, IctvServerConnection(slide_request.status_code, msg='slide').popup(), None
+            return # StatusCode.ERROR, IctvServerConnection(slide_request.status_code, msg='slide').popup(), None
     else:
-        return StatusCode.ERROR, IctvServerConnection(capsule_request.status_code, msg='capsule').popup(), None
+        return # StatusCode.ERROR, IctvServerConnection(capsule_request.status_code, msg='capsule').popup(), None
