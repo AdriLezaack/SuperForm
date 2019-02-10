@@ -31,7 +31,9 @@ def create_a_publishing(post, chn, form):
     title_post = form.get(chan + '_titlepost') if (form.get(chan + '_titlepost') is not None) else post.title
     user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
 
-    if form.get(chan + '_descriptionpost') is not None :
+    if "twitter" in chn.module:
+        descr_post = form.get('tweets')
+    elif form.get(chan + '_descriptionpost') is not None :
         descr_post = form.get(chan + '_descriptionpost')
     else :
         descr_post = post.description

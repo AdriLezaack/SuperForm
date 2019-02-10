@@ -12,3 +12,4 @@ __pycache__/
 /superform/dist/*
 /superform/superform.egg-info/*
 
+superform/superform/bd/
