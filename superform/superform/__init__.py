@@ -21,7 +21,6 @@ from superform.posts import posts_page
 from superform.users import get_moderate_channels_for_user, is_moderator
 from superform.search import search_page
 from superform.publishings import pub_page
-from superform.rss_explorer import rss_explorer_page
 from superform.users import get_moderate_channels_for_user, is_moderator, \
     channels_available_for_user
 
