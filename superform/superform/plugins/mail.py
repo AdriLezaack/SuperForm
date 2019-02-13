@@ -6,14 +6,14 @@ from flask import current_app
 import json
 
 # list of field names that are not used by your module
-FIELDS_UNAVAILABLE = ['Title','Description']
+FIELDS_UNAVAILABLE = ['Title', 'Description']
 
 # This lets the manager of your module enter data that are used to communicate with other services.
-CONFIG_FIELDS = ["sender","receiver"]#
+CONFIG_FIELDS = ["sender", "receiver"]  #
 
 
 # used in publishings.py
-def run(publishing,channel_config):  # publishing:DB channelconfig:DB channel
+def run(publishing, channel_config):  # publishing:DB channelconfig:DB channel
     json_data = json.loads(channel_config)  # to a Python object
     sender = json_data['sender']  # data sur le sender ds channelconfig(= dictionnaire)
     receivers = json_data['receiver']  # data sur le receiver ds channelconfig(= dictionnaire)
@@ -26,7 +26,7 @@ def run(publishing,channel_config):  # publishing:DB channelconfig:DB channel
     msg.attach(MIMEText(body, 'plain'))  # ajouter contenu texte publication
 
     try:
-        smtpObj = smtplib.SMTP(current_app.config["SMTP_HOST"],current_app.config["SMTP_PORT"])
+        smtpObj = smtplib.SMTP(current_app.config["SMTP_HOST"], current_app.config["SMTP_PORT"])
         if current_app.config["SMTP_STARTTLS"]:
             smtpObj.starttls()
         text = msg.as_string()

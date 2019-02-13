@@ -112,7 +112,7 @@
                                         <div class="form-group">
                                             <label for="{{ chan.name }}_descriptionpost">Description</label><br>
                                             <textarea class="form-control" rows="5" id="{{ chan.name }}_descriptionpost"
-                                                      name="{{ chan.name }}_descriptionpost" ></textarea>
+                                                      name="{{ chan.name }}_descriptionpost"></textarea>
                                         </div>
                                         <div class="form-group">
                                             <label for="{{ chan.name }}_linkurlpost">Link</label><br>
@@ -197,12 +197,13 @@
             $('#' + chan_name + '_datefrompost').val(($('#datefrompost')).val());
             $('#' + chan_name + '_dateuntilpost').val(($('#dateuntilpost')).val());
         }
+
         $('input.checkbox').change(function () {
             var nbselected = $('input.checkbox:checked').length;
-            if(nbselected ==0){
-               $("#publish-button").prop('disabled', true);
-            }else{
-               $("#publish-button").prop('disabled', false);
+            if (nbselected == 0) {
+                $("#publish-button").prop('disabled', true);
+            } else {
+                $("#publish-button").prop('disabled', false);
             }
 
             var nameC = $(this).attr('data-namechan');
@@ -213,25 +214,25 @@
                 $(this).addClass('checked');
                 synchronize_fields(nameC);
                 for (var i = 0; i < split.length; i++) {
-                    var field_id = $('#'+split[i].toLowerCase()+'post').attr('id');
+                    var field_id = $('#' + split[i].toLowerCase() + 'post').attr('id');
                     $("input[id='" + nameC + "_" + field_id + "']").prop('disabled', true);
                     $("textarea[id='" + nameC + "_" + field_id + "']").prop('disabled', true);
 
-                    $("label[for='" + nameC + "_" + field_id + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC +'"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
+                    $("label[for='" + nameC + "_" + field_id + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC + '"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
 
                 }
                 $('[data-toggle="popover"]').popover();
-                $('#li_'+nameC).show();
+                $('#li_' + nameC).show();
             } else {
                 //If the channel is not selected
                 $(this).removeClass('checked');
                 for (var i = 0; i < split.length; i++) {
-                    var field_id = $('#'+split[i].toLowerCase()+'post').attr('id');
+                    var field_id = $('#' + split[i].toLowerCase() + 'post').attr('id');
                     $("input[id='" + nameC + "_" + field_id + "']").prop('disabled', false);
                     $("textarea[id='" + nameC + "_" + field_id + "']").prop('disabled', false);
                     $("label[for='" + nameC + "_" + field_id + "'] > a").remove();
                 }
-                $('#li_'+nameC).hide();
+                $('#li_' + nameC).hide();
             }
         });
     </script>

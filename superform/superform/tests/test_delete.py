@@ -6,6 +6,7 @@ from superform import app, db
 from superform.models import Post, Publishing
 from superform.utils import datetime_converter
 
+
 @pytest.fixture
 def client():
     app.app_context().push()
@@ -83,7 +84,7 @@ def test_delete_publishing(client):
 
     # Try with a publishing submitted for review (state=0)
     pub1 = Publishing(post_id=id_post, channel_id=id_channel, state=0, title=title_post, description=descr_post,
-                     link_url=link_post, image_url=image_post, date_from=date_from, date_until=date_until)
+                      link_url=link_post, image_url=image_post, date_from=date_from, date_until=date_until)
     db.session.add(pub1)
     db.session.commit()
 

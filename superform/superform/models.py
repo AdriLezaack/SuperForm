@@ -86,7 +86,6 @@ class Channel(db.Model):
 
 
 class Authorization(db.Model):
-
     user_id = db.Column(db.String(80), db.ForeignKey("user.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
     permission = db.Column(db.Integer, nullable=False)

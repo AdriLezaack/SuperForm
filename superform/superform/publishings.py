@@ -76,4 +76,3 @@ def moderate_publishing(id, idc):
             return render_template('moderate_post.html', pub=pub, notconf=True)
 
         return redirect(url_for('index'))
-

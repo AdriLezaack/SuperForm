@@ -131,8 +131,8 @@ def delete_publishing(post_id, channel_id):
                     if pub.channel_id == channel.id:
                         # The publishing has been posted
                         if pub.state == 1:
-                                flash("The publishing has been posted")
-                                return redirect(url_for('delete.delete', id=post_id))
+                            flash("The publishing has been posted")
+                            return redirect(url_for('delete.delete', id=post_id))
 
             else:
                 # The user is trying to delete the publishing linked to a post he did not create
