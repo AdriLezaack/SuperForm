@@ -56,10 +56,13 @@ def configure_channel(id):
     config_fields = clas.CONFIG_FIELDS
 
     if request.method == 'GET':
-        if (c.config is not ""):
+        if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
-        return render_template("channel_configure.html", channel=c, config_fields=config_fields)
+        try:
+            return clas.render_specific_config_page(c, config_fields)
+        except AttributeError:
+            return render_template("channel_configure.html", channel=c, config_fields=config_fields)
     str_conf = "{"
     cfield = 0
     for field in config_fields:
