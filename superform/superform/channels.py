@@ -57,7 +57,8 @@ def channel_list():
         fields = clas.AUTH_FIELDS
         auth_fields[m] = fields
 
-    return render_template("channels.html", channels=channels, modules=get_modules_names(current_app.config["PLUGINS"].keys()), auth_fields=auth_fields)
+    return render_template("channels.html", channels=channels,
+                           modules=get_modules_names(current_app.config["PLUGINS"].keys()), auth_fields=auth_fields)
 
 
 @channels_page.route("/configure/<int:id>", methods=['GET', 'POST'])

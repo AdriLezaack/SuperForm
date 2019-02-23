@@ -1,11 +1,10 @@
-from flask import Blueprint,  render_template, send_file
+from flask import Blueprint, render_template, send_file
 from superform.models import db, Publishing, Channel, Post
 from rfeed import *
 import io
 import ast
 from superform.utils import login_required, get_instance_from_module_path, get_modules_names, get_module_full_name
 from datetime import datetime, timedelta
-
 
 rss_page = Blueprint('rss', __name__)
 
@@ -17,14 +16,14 @@ def display_rss_feed(id):
         return render_template("404.html")
     clas = get_instance_from_module_path('superform.plugins.rss')
     config_fields = clas.CONFIG_FIELDS
-    d = {} # ['channel_title', 'channel_description', 'channel_author']
+    d = {}  # ['channel_title', 'channel_description', 'channel_author']
     if (c.config is not ""):
         d = ast.literal_eval(c.config)
 
     Pubdb = db.session.query(Publishing).filter(Publishing.channel_id == id)
     items = []
     for Publi in Pubdb:
-        if Publi.state == 1 and Publi.date_from<= datetime.now() and Publi.date_until>=datetime.now(): # check if send
+        if Publi.state == 1 and Publi.date_from <= datetime.now() and Publi.date_until >= datetime.now():  # check if send
             author = db.session.query(Post).filter(Post.id == Publi.post_id).first()
             item1 = Item(
                 title=Publi.title,

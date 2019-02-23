@@ -49,7 +49,8 @@ def index():
     pubs_unvalidated = []
     if user_id != -1:
         # AJOUTER Post.user_id == user_id dans posts DANS QUERY?
-        posts_var = db.session.query(Post).filter(Post.user_id == user_id).order_by(Post.date_created.desc()).paginate(page, 5, error_out=False)
+        posts_var = db.session.query(Post).filter(Post.user_id == user_id).order_by(Post.date_created.desc()).paginate(
+            page, 5, error_out=False)
         for post in posts_var.items:
             publishings_var = db.session.query(Publishing).filter(Publishing.post_id == post.id).all()
             channels_var = set()
@@ -58,7 +59,7 @@ def index():
             setattr(post, "channels", channels_var)
 
         posts_user = db.session.query(Post).filter(Post.user_id == user_id).all()
-        pubs_unvalidated = db.session.query(Publishing).filter(Publishing.state == State.REFUSED.value).\
+        pubs_unvalidated = db.session.query(Publishing).filter(Publishing.state == State.REFUSED.value). \
             order_by(Publishing.post_id).order_by(Publishing.channel_id).all()
         post_ids = [p.id for p in posts_user]
         pubs = []

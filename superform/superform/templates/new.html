@@ -128,7 +128,8 @@
                                                         <input type="text" name="{{ chan.name }}_imagepost"
                                                                id="{{ chan.name }}_imagepost" class="form-control">
                                                         <button id="js-open-preview-image" type="button"
-                                                                class="btn btn-secondary" onclick="PreviewFunction('{{ chan.name }}_imagepost')">
+                                                                class="btn btn-secondary"
+                                                                onclick="PreviewFunction('{{ chan.name }}_imagepost')">
                                                             Preview
                                                         </button>
                                                     </div>
@@ -156,7 +157,8 @@
                                                 </div>
                                             </div>
                                             {% if extra_forms[chan.name]!=None %}
-                                                {% include extra_forms[chan.name] %} <!-- include extra form if necessary -->
+                                                {% include extra_forms[chan.name] %}
+                                                <!-- include extra form if necessary -->
                                             {% endif %}
                                         </div>
                                     </div>
@@ -206,7 +208,8 @@
 
 {% block scripts %}
     <script type="text/javascript">
-        var post_form_validations = {{ post_form_validations|tojson }}
+        var post_form_validations =
+        {{ post_form_validations|tojson }}
     </script>
     <script>
         function PreviewFunction(post) {
@@ -217,23 +220,22 @@
             console.log(split)
             console.log(post)
 
-            if (split[split.length-1] == "imagepost") {
-                var parent = $("#"+post).parent();
+            if (split[split.length - 1] == "imagepost") {
+                var parent = $("#" + post).parent();
                 var input = parent.find("input");
                 var text = input.val();
                 var url = text;
             }
-            else if (split[split.length-1] == "backgroundpost") {
+            else if (split[split.length - 1] == "backgroundpost") {
                 var url = $("#backgroundpost").val();
             }
-            else if(split[split.length-1] == "logopost") {
+            else if (split[split.length - 1] == "logopost") {
                 var parent = $("#js-open-preview-logo").parent();
                 var input = parent.find("input");
                 var text = input.val();
                 var url = text;
             }
             console.log(url)
-
 
 
             var preview = $("#previewModal");
@@ -380,7 +382,6 @@
         });
 
 
-
         // This manage if a channel is selected or not:
         //  it hides/shows a tab for a channel
         //  it adds an information bullet to unavailable fields for each channel
@@ -458,7 +459,6 @@
                 })
                 .val(text);
         });
-
 
 
         $('#dateuntilpost').on("change", function (event) {

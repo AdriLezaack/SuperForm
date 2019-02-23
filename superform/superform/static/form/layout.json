@@ -43,13 +43,17 @@
     {
       "module": "superform.plugins.twitter",
       "icon": "fab fa-twitter",
-      "disabled_fields": ["title"],
+      "disabled_fields": [
+        "title"
+      ],
       "additional_fields": []
     },
     {
       "module": "superform.plugins.ICTV",
       "icon": "fas fa-tv",
-      "disabled_fields": ["link_url"],
+      "disabled_fields": [
+        "link_url"
+      ],
       "additional_fields": [
         {
           "name": "subtitle",
@@ -80,7 +84,9 @@
     {
       "module": "superform.plugins.mail",
       "icon": "fas fa-envelope",
-      "disabled_fields": ["image_url"],
+      "disabled_fields": [
+        "image_url"
+      ],
       "additional_fields": []
     },
     {

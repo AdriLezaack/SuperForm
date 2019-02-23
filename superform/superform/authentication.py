@@ -8,6 +8,7 @@ from superform.users import get_moderate_channels_for_user
 
 authentication_page = Blueprint('authentication', __name__)
 
+
 def prepare_saml_request(request):
     acs_config = current_app.config["SAML"]["sp"]["assertionConsumerService"]
     acs_config["url"] = url_for("authentication.callback", _external=True)
@@ -62,7 +63,9 @@ def callback():
         # To do : create function to avoid duplication with pub_page '/moderate'
         if user.admin:
             chans = get_moderate_channels_for_user(user)
-            pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.id) & (Publishing.state == 0)) for c in chans)
+            pubs_per_chan = (
+            db.session.query(Publishing).filter((Publishing.channel_id == c.id) & (Publishing.state == 0)) for c in
+            chans)
             flattened_list_pubs = [y for x in pubs_per_chan for y in x]
             session["notification"] = len(flattened_list_pubs)
         else:

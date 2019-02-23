@@ -9,6 +9,7 @@ from superform.posts import get_post_form_validations
 
 pub_page = Blueprint('publishings', __name__)
 
+
 @pub_page.route('/moderate', methods=["GET"])
 @login_required()
 def moderate():
@@ -29,7 +30,6 @@ def moderate():
 @pub_page.route('/moderate/<int:id>/<string:idc>', methods=["GET", "POST"])
 @login_required()
 def moderate_publishing(id, idc):
-
     chn = db.session.query(Channel).filter(Channel.id == idc).first()
     """ FROM THIS : 
     SHOULD BE IN THE if request.method == 'GET' (BUT pub.date_from = str_converter(pub.date_from) PREVENT US)"""
@@ -42,7 +42,8 @@ def moderate_publishing(id, idc):
     """TO THIS"""
     pub_versions = json.dumps(pub_versions, cls=AlchemyEncoder)
     pub_comments_json = json.dumps(pub_comments, cls=AlchemyEncoder)
-    pub = db.session.query(Publishing).filter(Publishing.post_id == id, Publishing.channel_id == idc).order_by(Publishing.num_version.desc()).first()
+    pub = db.session.query(Publishing).filter(Publishing.post_id == id, Publishing.channel_id == idc).order_by(
+        Publishing.num_version.desc()).first()
     pub.date_from = str_converter(pub.date_from)
     pub.date_until = str_converter(pub.date_until)
     if request.method == "GET":

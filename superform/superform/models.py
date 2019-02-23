@@ -66,7 +66,7 @@ class AlchemyEncoder(json.JSONEncoder):
                     if data.__class__ == datetime.datetime:
                         fields[field] = str_converter(data)
                     else:
-                        json.dumps(data) # this will fail on non-encodable values, like other classes
+                        json.dumps(data)  # this will fail on non-encodable values, like other classes
                         fields[field] = data
                 except TypeError:
                     fields[field] = None
@@ -119,7 +119,6 @@ class Channel(db.Model):
 
 
 class Authorization(db.Model):
-
     user_id = db.Column(db.String(80), db.ForeignKey("user.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
     permission = db.Column(db.Integer, nullable=False)

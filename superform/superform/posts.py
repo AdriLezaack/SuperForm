@@ -125,7 +125,8 @@ def new_post():
 
         post_form_validations = get_post_form_validations()
 
-        return render_template('new.html', extra_forms=extraForms, l_chan=list_of_channels, post_form_validations=post_form_validations,
+        return render_template('new.html', extra_forms=extraForms, l_chan=list_of_channels,
+                               post_form_validations=post_form_validations,
                                date=default_date)
     else:
         create_a_post(request.form)
@@ -195,7 +196,8 @@ def resubmit_publishing(id):
         db.session.commit()
         return redirect(url_for('index'))
     else:
-        pub_versions = db.session.query(Publishing).filter(Publishing.post_id == pub.post_id, Publishing.channel_id == pub.channel_id). \
+        pub_versions = db.session.query(Publishing).filter(Publishing.post_id == pub.post_id,
+                                                           Publishing.channel_id == pub.channel_id). \
             order_by(Publishing.num_version.desc()).all()
         pub_ids = []
         for pub_ver in pub_versions:
@@ -208,11 +210,12 @@ def resubmit_publishing(id):
 
         post_form_validations = get_post_form_validations()
 
-        return render_template('resubmit_post.html', pub=pub, channel=chn, pub_versions=pub_versions, pub_comments=pub_comments_json, comments=pub_comments, post_form_validations=post_form_validations)
+        return render_template('resubmit_post.html', pub=pub, channel=chn, pub_versions=pub_versions,
+                               pub_comments=pub_comments_json, comments=pub_comments,
+                               post_form_validations=post_form_validations)
 
 
 def create_a_resubmit_publishing(pub, chn, form):
-
     validate = pre_validate_post(chn, pub)
     if validate == -1 or validate == 0:
         return validate
@@ -236,12 +239,12 @@ def create_a_resubmit_publishing(pub, chn, form):
 
     latest_version_publishing = db.session.query(Publishing).filter(Publishing.post_id == pub.post_id,
                                                                     Publishing.channel_id == chn.id).order_by(
-                                                                    Publishing.num_version.desc()
-                                                                    ).first()
+        Publishing.num_version.desc()
+    ).first()
     new_pub = Publishing(num_version=latest_version_publishing.num_version + 1, post_id=pub.post_id, channel_id=chn.id,
-                     state=State.NOT_VALIDATED.value, title=title_post, description=descr_post,
-                     link_url=link_post, image_url=image_post,
-                     date_from=date_from, date_until=date_until)
+                         state=State.NOT_VALIDATED.value, title=title_post, description=descr_post,
+                         link_url=link_post, image_url=image_post,
+                         date_from=date_from, date_until=date_until)
     return new_pub
 
 
@@ -259,4 +262,3 @@ def get_post_form_validations():
         fields = clas.POST_FORM_VALIDATIONS
         post_form_validations[m] = fields
     return post_form_validations
-

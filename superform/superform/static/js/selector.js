@@ -1,4 +1,3 @@
-
 var defaultFields = [
     {
         "id": "titlepost",
@@ -27,14 +26,14 @@ var defaultFields = [
 ];
 
 var selector = $("#js-tab-selector");
-selector.find('input[type="checkbox"]').one("change", function() {
+selector.find('input[type="checkbox"]').one("change", function () {
     if (this.checked) {
         var home = $(document).find("#home");
         var menu = $(document).find("#menu" + $(this).val());
         if ($(this).attr("data-new") == "True") {
             for (var k = 0; k < defaultFields.length; k++) {
                 var text = home.find("#" + defaultFields[k].id).val();
-                menu.find(".form-control").filter(function() {
+                menu.find(".form-control").filter(function () {
                     return this.id.match(defaultFields[k].regex);
                 }).val(text)
             }
